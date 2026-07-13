@@ -1,0 +1,37 @@
+name: docker actions
+
+on:
+  push:
+    branches:
+        - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+
+    env:
+      IMAGE_NAME: ${{secrets.DOCKERHUB_USERNAME}}/dockaction:latest
+      CONTAINER_NAME: dockaction-app
+      PORT: 3000
+
+
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v4
+
+      - name: 'login'
+        uses: docker/login-action@v3
+        with: 
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+
+      - name: 'build'
+        run: |
+          docker build -t ${{env.IMAGE_NAME}} .
+
+      - name: 'push'
+        run : |
+          docker push ${{env.IMAGE_NAME}} 
+
+
